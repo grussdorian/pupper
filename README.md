@@ -39,3 +39,19 @@ You can find the bill of materials, pre-made kit purchasing options, assembly in
 - We also have a Google group set up here: https://groups.google.com/forum/#!forum/stanford-quadrupeds
 
 
+## Calibration values
+
+| Servo name | Offset Angle | Final angle |
+| ---------- | ------------ | ----------- |
+| J1         | -34          | 79          |
+| J2         | -38          | 83          |
+| J3         | 35           | -85         |
+| J4         | -40          | 40          |
+| J5         | -41          | 86          |
+| J6         | 30           | -75         |
+| J7         | -44          | 44          |
+| J8         | -49          | 94          |
+| J9         | 38           | -83         |
+| J10        | -48          | 48          |
+| J11        | -46          | 91          |
+| J12        | 36           | -81         |

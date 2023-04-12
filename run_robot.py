@@ -12,7 +12,7 @@ import socket
 from pprint import pprint
 # Initialising UDP port and ip
 
-UDP_IP = "127.0.1.1"
+UDP_IP = "localhost"
 UDP_PORT = 9999
 
 # Binding the socket object to correct UDP IP and Port

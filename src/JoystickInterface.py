@@ -9,7 +9,7 @@ import pickle
 from pprint import pprint
 
 class JoystickInterface:
-    def __init__(self, config, UDP_PORT=6666, udp_publisher_port = 8840, UDP_IP = "127.0.1.1"):
+    def __init__(self, config, UDP_PORT=6666, udp_publisher_port = 8840, UDP_IP = "localhost"):
         self.config = config
         self.previous_gait_toggle = 0
         self.previous_state = BehaviorState.REST
