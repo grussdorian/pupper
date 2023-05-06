@@ -78,8 +78,9 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=[], frame_height=3
                     n_objects -= 1
                     center_x = x1 + (height // 2)
                     center_y = y1 + (width // 2)
-                    object_center = (center_x, center_y)
-                    objectInfo.append(object_center)
+                    A = height*width
+                    object_data = ((center_x, center_y), A, box)
+                    objectInfo.append(object_data)
     return img, objectInfo
 
 

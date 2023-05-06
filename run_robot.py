@@ -79,7 +79,7 @@ def main(use_imu=False):
 
             # Parse the udp joystick commands and then update the robot controller's parameters
             print("Got before command = joystick_interface")
-            command = joystick_interface.get_command(state)
+            command = joystick_interface.(state)
             print("Got after command = joystick_interface")
             # data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
             # dummy_msg = pickle.loads(data)

@@ -13,7 +13,9 @@ nms = 0.8
 fps = 1000
 delay_time = int(1000/fps)
 frame_center = (frame_height//2, frame_width//2)
-
+V_THRESH = 100
+DELTA = 100
+c = 600000
 # Define camera capture thread
 
 
@@ -99,7 +101,9 @@ def process_frame(frame):
         return img
     # print(objectInfo[1])
     # print(result)
-    object_center = objectInfo[-1]
+    object_center = objectInfo[-1][0]
+    A =  objectInfo[-1][1] 
+    box = objectInfo[-1][2]
     # print(type(object_center[0]), type(object_center[1]))
 
     # Vector v denotes the magnitude and direction of Yaw control
@@ -108,15 +112,20 @@ def process_frame(frame):
 
     # Only try to draw stuff that are well defined otherwise opencv will crash
     if v_mod < 0:
-        print(f"direction is left to right, magnitude is {v_mod}")
+        print(f"direction is left to right, magnitude is {v_mod}, A = {A}")
     elif v_mod > 0:
-        print(f"direction is right to left, magnitude is {v_mod}")
+        print(f"direction is right to left, magnitude is {v_mod}, A = {A}")
     else:
         print(f"No Yaw required")
 
     cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
                     thickness=2, tipLength=0.5)
+    # cv2.rectangle(img, box, color=(0, 255, 255), thickness=2)
+    # cv2.circle(img, object_center, radius=V_THRESH,
+    #                            color=(255, 255, 255), thickness=-1)
+    # box2 = (frame_center[0], frame_center[1], DELTA, DELTA)
     
+    # cv2.rectangle(img, box2, color=(0, 255, 255), thickness=2)
     send_control_signal(v_mod, A, keyboard = False)
     return img
 

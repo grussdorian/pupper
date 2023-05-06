@@ -193,6 +193,7 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
                 raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
                 time.sleep(0.005)
+            print("rx = 1")
             controller_dataframe['rx'] = 0
         elif v_mod < -V_THRESH:
             yaw = -1
@@ -204,6 +205,7 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
                 raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
                 time.sleep(0.005)
+            print("rx = -1")
             controller_dataframe['rx'] = 0
         elif A < DELTA:
             zoom = 1
@@ -215,6 +217,7 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
                 raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
                 time.sleep(0.005)
+            print("ly = 1")
             controller_dataframe['ly'] = 0
         elif A > DELTA//2 and A < DELTA:
             zoom = -1
@@ -226,6 +229,7 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
                 raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
                 time.sleep(0.005)
+            print("ly = -1")
             controller_dataframe['ly'] = 0
         elif getch() == 'p':
             activation_signal = {
