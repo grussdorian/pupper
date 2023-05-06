@@ -1,25 +1,29 @@
-## NOTE This code currently crashes on MacOS due to platform limitations. 
+# NOTE This code currently crashes on MacOS due to platform limitations.
 
 import cv2
 import threading
 import queue
 from object_ident import getObjects
-import cv2 
-frame_height = 720
-frame_width = 1280
+import cv2
+from control_pupper import send_control_signal
+frame_height = 1280
+frame_width = 720
 thresh = 0.7  # Threshold to detect object
 nms = 0.8
 fps = 1000
 delay_time = int(1000/fps)
-frame_center = (frame_width//2, frame_height//2)
+frame_center = (frame_height//2, frame_width//2)
 
 # Define camera capture thread
+
+
 class CaptureThread(threading.Thread):
     def __init__(self, cap, frame_buffer):
         threading.Thread.__init__(self)
         self.cap = cap
         self.frame_buffer = frame_buffer
         self._stop_event = threading.Event()
+
     def run(self):
         while not self._stop_event.is_set():
             # Read frame from camera
@@ -33,6 +37,8 @@ class CaptureThread(threading.Thread):
         self._stop_event.set()
 
 # Define frame processing thread
+
+
 class ProcessThread(threading.Thread):
     def __init__(self, frame_buffer, processed_buffer):
         threading.Thread.__init__(self)
@@ -55,6 +61,8 @@ class ProcessThread(threading.Thread):
         self._stop_event.set()
 
 # Define frame display thread
+
+
 class DisplayThread(threading.Thread):
     def __init__(self, processed_buffer):
         threading.Thread.__init__(self)
@@ -80,21 +88,21 @@ class DisplayThread(threading.Thread):
         self._stop_event.set()
 
 
-
 # Define frame processing function
 def process_frame(frame):
     img = frame
     n_objects = 1
-    result, objectInfo = getObjects(n_objects, img, thresh, nms, draw=False, frame_height=frame_height, frame_width=frame_width)
-    ## Check iff one objected is detected. If number of objects detected != 1 then continue in the loop
+    result, objectInfo = getObjects(
+        n_objects, img, thresh, nms, draw=False, frame_height=frame_height, frame_width=frame_width)
+    # Check iff one objected is detected. If number of objects detected != 1 then continue in the loop
     if len(objectInfo) != 2:
-      return img
+        return img
     # print(objectInfo[1])
     # print(result)
     object_center = objectInfo[-1]
     # print(type(object_center[0]), type(object_center[1]))
 
-    ## Vector v denotes the magnitude and direction of Yaw control
+    # Vector v denotes the magnitude and direction of Yaw control
     v = (object_center, (frame_center[0], object_center[1]))
     v_mod = frame_center[0] - object_center[0]
 
@@ -105,15 +113,16 @@ def process_frame(frame):
         print(f"direction is right to left, magnitude is {v_mod}")
     else:
         print(f"No Yaw required")
-    
+
     cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
-                                thickness=2, tipLength=0.5)
-
-
+                    thickness=2, tipLength=0.5)
+    
+    send_control_signal(v_mod, )
     return img
 
-# Create camera capture object
-cap = cv2.VideoCapture(0)
+
+# Create camera capture object, for the raspberry pi's usb camera, the rgb camera id is 2
+cap = cv2.VideoCapture(2)
 cap.set(3, frame_height)
 cap.set(4, frame_width)
 # Create frame buffers

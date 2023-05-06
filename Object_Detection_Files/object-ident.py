@@ -35,7 +35,7 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=['person']):
                     n_objects -= 1
                     center_x = x1 + (height // 2)
                     center_y = y1 + (width // 2)
-                    object_center = (center_x,center_y)
+                    object_center = (center_x, center_y)
                     frame_center = (frame_width//2, frame_height//2)
                     cv2.arrowedLine(img, object_center, frame_center, (0, 255, 0),
                                     thickness=2, tipLength=0.5)
@@ -62,7 +62,7 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=['person']):
 if __name__ == "__main__":
     thresh = 0.7  # Threshold to detect object
     nms = 0.8
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     # simulate delay, change fps
     fps = 120
     delay_time = int(1000/fps)

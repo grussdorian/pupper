@@ -11,7 +11,7 @@ if platform.system() == "Windows":
     classFile = "C:\\Users\\hardik\\pupper-master-github\\pupper\\Object_Detection_Files\\coco.names"
     configPath = "C:\\Users\\hardik\\pupper-master-github\\pupper\\Object_Detection_Files\\ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
     weightsPath = "C:\\Users\\hardik\\pupper-master-github\\pupper\\Object_Detection_Files\\frozen_inference_graph.pb"
-if platform.system() == "Darwin":
+else:
     classFile = "./coco.names"
     configPath = "./ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
     weightsPath = "./frozen_inference_graph.pb"
@@ -27,7 +27,7 @@ net.setInputMean((127.5, 127.5, 127.5))
 net.setInputSwapRB(True)
 
 
-def getObjects(n_objects, img, thres, nms, draw=True, objects=['person'], frame_height = 320, frame_width = 320):
+def getObjects(n_objects, img, thres, nms, draw=True, objects=[], frame_height=320, frame_width=320):
     # print(frame_width, frame_height)
     if frame_width < frame_height:
         frame_center = (frame_height//2, frame_width//2)
@@ -35,7 +35,6 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=['person'], frame_
         frame_center = (frame_width//2, frame_height//2)
     else:
         frame_center = (frame_width//2, frame_width//2)
-
 
     classIds, confs, bbox = net.detect(
         img, confThreshold=thres, nmsThreshold=nms)
@@ -53,7 +52,7 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=['person'], frame_
                     n_objects -= 1
                     center_x = x1 + (height // 2)
                     center_y = y1 + (width // 2)
-                    object_center = (center_x,center_y)
+                    object_center = (center_x, center_y)
                     cv2.arrowedLine(img, object_center, frame_center, (0, 255, 0),
                                     thickness=2, tipLength=0.5)
                     cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
@@ -74,12 +73,12 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=['person'], frame_
                     cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
                                 cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
                     # print(n_objects)
-                elif (n_objects>0):
+                elif (n_objects > 0):
                     x1, y1, height, width = box[0], box[1], box[2], box[3]
                     n_objects -= 1
                     center_x = x1 + (height // 2)
                     center_y = y1 + (width // 2)
-                    object_center = (center_x,center_y)
+                    object_center = (center_x, center_y)
                     objectInfo.append(object_center)
     return img, objectInfo
 
@@ -99,7 +98,8 @@ if __name__ == "__main__":
     # frame_width = 1280
     thresh = 0.7  # Threshold to detect object
     nms = 0.8
-    cap = cv2.VideoCapture(0)
+    # For the pi's camera, camera id is 2
+    cap = cv2.VideoCapture(2)
     # simulate delay, change fps
     fps = 120
     delay_time = int(1000/fps)
@@ -112,7 +112,8 @@ if __name__ == "__main__":
     while True:
         n_objects = 1
         success, img = cap.read()
-        result, objectInfo = getObjects(n_objects, img, thresh, nms, frame_height=frame_h, frame_width=frame_w)
+        result, objectInfo = getObjects(
+            n_objects, img, thresh, nms, frame_height=frame_h, frame_width=frame_w)
         # print(objectInfo)
         # print(result)
         cv2.imshow("Output", img)

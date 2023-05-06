@@ -58,13 +58,13 @@ def main(use_imu=False):
         while True:
             # command = joystick_interface.get_command(state)
             data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-            dummy_msg = pickle.loads(data)
-            pprint(dummy_msg)
+            msg = pickle.loads(data)
+            pprint(msg)
             # joystick_interface.set_color(config.ps4_deactivated_color)
             # if command.activate_event == 1:
             #     break
             
-            if dummy_msg["L1"] == 1:
+            if msg["L1"] == 1:
                 print("Got activation signal")
                 break
             time.sleep(0.1)
