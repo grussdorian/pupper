@@ -117,7 +117,7 @@ def process_frame(frame):
     cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
                     thickness=2, tipLength=0.5)
     
-    send_control_signal(v_mod, )
+    send_control_signal(v_mod, A, keyboard = False)
     return img
 
 
