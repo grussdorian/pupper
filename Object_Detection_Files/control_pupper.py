@@ -23,7 +23,7 @@ square = 0
 circle = 0
 triangle = 0
 MESSAGE_RATE = 20
-delta_time = 0.15
+delta_time = 0.05
 class _Getch:
     """Gets a single character from standard input.  Does not echo to the
 screen."""
@@ -186,8 +186,8 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
             return
         elif v_mod > V_THRESH:
 
-            print("passing, v_mod > V_THRESH")
-            return
+            # print("passing, v_mod > V_THRESH")
+            # return
 
             yaw = 1
             controller_dataframe['rx'] = yaw
@@ -202,8 +202,8 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
             controller_dataframe['rx'] = 0
         elif v_mod < -V_THRESH:
 
-            print("passing, v_mod < -V_THRESH")
-            return
+            # print("passing, v_mod < -V_THRESH")
+            # return
 
             yaw = -1
             controller_dataframe['rx'] = yaw
