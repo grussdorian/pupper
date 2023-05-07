@@ -25,7 +25,7 @@ triangle = 0
 MESSAGE_RATE = 20
 delta_time = 0.25
 delta_time2 = 0.1
-burst_time = 0.01
+burst_time = 0.005
 class _Getch:
     """Gets a single character from standard input.  Does not echo to the
 screen."""
