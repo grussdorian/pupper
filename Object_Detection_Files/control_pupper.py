@@ -23,8 +23,8 @@ square = 0
 circle = 0
 triangle = 0
 MESSAGE_RATE = 20
-delta_time = 0.25
-delta_time2 = 0.1
+delta_time = 0.25 #bt_z in the paper
+delta_time2 = 0.1 #bt_x in the paper
 burst_time = 0.005
 class _Getch:
     """Gets a single character from standard input.  Does not echo to the
