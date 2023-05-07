@@ -68,10 +68,18 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=[], frame_height=3
                     # cv2.circle(img, (x1+height//2,y1+width//2), radius=5,
                     #            color=(0, 255, 255), thickness=-1)
 
-                    cv2.putText(img, classNames[classId-1].upper(), (box[0]+10, box[1]+30),
-                                cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-                    cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
-                                cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+                    # cv2.putText(img, classNames[classId-1].upper(), (box[0]+10, box[1]+30),
+                    #             cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+                    # cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
+                    #             cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+                    
+                    x1, y1, height, width = box[0], box[1], box[2], box[3]
+                    n_objects -= 1
+                    center_x = x1 + (height // 2)
+                    center_y = y1 + (width // 2)
+                    A = height*width
+                    object_data = ((center_x, center_y), A, box)
+                    objectInfo.append(object_data)
                     # print(n_objects)
                 elif (n_objects > 0):
                     x1, y1, height, width = box[0], box[1], box[2], box[3]

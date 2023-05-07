@@ -6,18 +6,21 @@ import queue
 from object_ident import getObjects
 import cv2
 from control_pupper import send_control_signal
+import socket 
+import pickle
 frame_height = 1280
 frame_width = 720
 thresh = 0.7  # Threshold to detect object
-nms = 0.8
-fps = 1000
-delay_time = int(1000/fps)
+nms = 0.8 # non maximum suppression
+fps = 1000 
+delay_time = int(1000/fps) # practically no delay
 frame_center = (frame_height//2, frame_width//2)
 V_THRESH = 100
 DELTA = 100
 c = 600000
 # Define camera capture thread
-
+address = ("192.168.0.143", 9090)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
 class CaptureThread(threading.Thread):
     def __init__(self, cap, frame_buffer):
@@ -95,7 +98,7 @@ def process_frame(frame):
     img = frame
     n_objects = 1
     result, objectInfo = getObjects(
-        n_objects, img, thresh, nms, draw=False, frame_height=frame_height, frame_width=frame_width)
+        n_objects, img, thresh, nms, draw=True, frame_height=frame_height, frame_width=frame_width)
     # Check iff one objected is detected. If number of objects detected != 1 then continue in the loop
     if len(objectInfo) != 2:
         return img
@@ -103,11 +106,11 @@ def process_frame(frame):
     # print(result)
     object_center = objectInfo[-1][0]
     A =  objectInfo[-1][1] 
-    box = objectInfo[-1][2]
+    # box = objectInfo[-1][2]
     # print(type(object_center[0]), type(object_center[1]))
 
     # Vector v denotes the magnitude and direction of Yaw control
-    v = (object_center, (frame_center[0], object_center[1]))
+    # v = (object_center, (frame_center[0], object_center[1]))
     v_mod = frame_center[0] - object_center[0]
 
     # Only try to draw stuff that are well defined otherwise opencv will crash
@@ -117,15 +120,22 @@ def process_frame(frame):
         print(f"direction is right to left, magnitude is {v_mod}, A = {A}")
     else:
         print(f"No Yaw required")
-
-    cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
-                    thickness=2, tipLength=0.5)
+    # payload = {
+    #     "v_mod": v_mod,
+    #     "A": A
+    # }
+    # payload = pickle.dumps(payload)
+    # sock.sendto(payload, address)
+    # cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
+    #                 thickness=2, tipLength=0.5)
     # cv2.rectangle(img, box, color=(0, 255, 255), thickness=2)
     # cv2.circle(img, object_center, radius=V_THRESH,
     #                            color=(255, 255, 255), thickness=-1)
     # box2 = (frame_center[0], frame_center[1], DELTA, DELTA)
     
     # cv2.rectangle(img, box2, color=(0, 255, 255), thickness=2)
+
+    # Send signal to controlling logic
     send_control_signal(v_mod, A, keyboard = False)
     return img
 
@@ -135,8 +145,8 @@ cap = cv2.VideoCapture(2)
 cap.set(3, frame_height)
 cap.set(4, frame_width)
 # Create frame buffers
-frame_buffer = queue.Queue(maxsize=1)
-processed_buffer = queue.Queue(maxsize=1)
+frame_buffer = queue.Queue(maxsize=7)
+processed_buffer = queue.Queue(maxsize=7)
 
 # Create threads
 capture_thread = CaptureThread(cap, frame_buffer)

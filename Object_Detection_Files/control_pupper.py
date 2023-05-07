@@ -1,7 +1,7 @@
 import socket
 import pickle
 import time
-DELTA1 = 180000
+DELTA1 = 200000
 DELTA2 = 250000
 V_THRESH = 80
 UDP_IP = "localhost"
@@ -23,7 +23,9 @@ square = 0
 circle = 0
 triangle = 0
 MESSAGE_RATE = 20
-delta_time = 0.05
+delta_time = 0.25
+delta_time2 = 0.1
+burst_time = 0.01
 class _Getch:
     """Gets a single character from standard input.  Does not echo to the
 screen."""
@@ -94,46 +96,51 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
         elif inp == 'w':
             zoom = 1
             controller_dataframe['ly'] = zoom
+            raw_data = pickle.dumps(controller_dataframe)
             time_target = int(time.time()) + delta_time
             while (True):
                 if int(time.time()) > time_target:
                     break
-                raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
+                time.sleep(burst_time)
+
             controller_dataframe['ly'] = 0
+            # controller_dataframe['rx'] = 0
+
         elif inp == 's':
             zoom = -1
             controller_dataframe['ly'] = zoom
+            raw_data = pickle.dumps(controller_dataframe)
             time_target = int(time.time()) + delta_time
             while (True):
                 if int(time.time()) > time_target:
                     break
-                raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
+                time.sleep(burst_time)
             controller_dataframe['ly'] = 0
+
+            
         elif inp == 'a':
             yaw = 1
             controller_dataframe['rx'] = yaw
             time_target = int(time.time()) + delta_time
+            raw_data = pickle.dumps(controller_dataframe)
             while (True):
                 if int(time.time()) > time_target:
                     break
-                raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
+                time.sleep(burst_time)
             controller_dataframe['rx'] = 0
         elif inp == 'd':
             yaw = -1
             controller_dataframe['rx'] = yaw
+            raw_data = pickle.dumps(controller_dataframe)
             time_target = int(time.time()) + delta_time
             while (True):
                 if int(time.time()) > time_target:
                     break
-                raw_data = pickle.dumps(controller_dataframe)
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
+                time.sleep(burst_time)
             controller_dataframe['rx'] = 0
         elif inp == 'p':
             activation_signal = {
@@ -179,43 +186,12 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
             return
         else:
             return
-        # print("signal sent")
 
+    # Controlling through camera
     else:
         if getch() == 'x':
             return
-        elif v_mod > V_THRESH:
-
-            # print("passing, v_mod > V_THRESH")
-            # return
-
-            yaw = 1
-            controller_dataframe['rx'] = yaw
-            raw_data = pickle.dumps(controller_dataframe)
-            time_target = int(time.time()) + delta_time
-            while (True):
-                if int(time.time()) > time_target:
-                    break
-                sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
-            print("rx = 1")
-            controller_dataframe['rx'] = 0
-        elif v_mod < -V_THRESH:
-
-            # print("passing, v_mod < -V_THRESH")
-            # return
-
-            yaw = -1
-            controller_dataframe['rx'] = yaw
-            raw_data = pickle.dumps(controller_dataframe)
-            time_target = int(time.time()) + delta_time
-            while (True):
-                if int(time.time()) > time_target:
-                    break
-                sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
-            print("rx = -1")
-            controller_dataframe['rx'] = 0
+        
         elif A < DELTA1:
             zoom = 1
             controller_dataframe['ly'] = zoom
@@ -225,7 +201,7 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
                 if int(time.time()) > time_target:
                     break
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
+                time.sleep(burst_time)
             print("ly = 1")
             controller_dataframe['ly'] = 0
         elif A > DELTA2:
@@ -237,9 +213,43 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
                 if int(time.time()) > time_target:
                     break
                 sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
-                time.sleep(0.005)
+                time.sleep(burst_time)
             print("ly = -1")
             controller_dataframe['ly'] = 0
+
+        elif v_mod > V_THRESH:
+
+            # print("passing, v_mod > V_THRESH")
+            # return
+
+            yaw = -1
+            controller_dataframe['rx'] = yaw
+            raw_data = pickle.dumps(controller_dataframe)
+            time_target = int(time.time()) + delta_time2
+            while (True):
+                if int(time.time()) > time_target:
+                    break
+                sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
+                time.sleep(burst_time)
+            print("rx = -1")
+            controller_dataframe['rx'] = 0
+        elif v_mod < -V_THRESH:
+
+            # print("passing, v_mod < -V_THRESH")
+            # return
+
+            yaw = 1
+            controller_dataframe['rx'] = yaw
+            raw_data = pickle.dumps(controller_dataframe)
+            time_target = int(time.time()) + delta_time2
+            while (True):
+                if int(time.time()) > time_target:
+                    break
+                sock.sendto(raw_data, (UDP_IP, UDP_PORT2))
+                time.sleep(burst_time)
+            print("rx = 1")
+            controller_dataframe['rx'] = 0
+
         elif getch() == 'p':
             activation_signal = {
             "ly": 0,
@@ -292,3 +302,4 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
 if __name__ == "__main__":
     while (True):
         send_control_signal()
+
