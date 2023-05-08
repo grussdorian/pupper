@@ -1,4 +1,7 @@
 import cv2
+# x dimension corresponds to height and y dimension corresponds to width, just like 2D array
+frame_height = 720
+frame_width = 1280
 
 classNames = []
 classFile = "./coco.names"
@@ -13,9 +16,6 @@ net.setInputSize(320, 320)
 net.setInputScale(1.0 / 127.5)
 net.setInputMean((127.5, 127.5, 127.5))
 net.setInputSwapRB(True)
-
-frame_height = 640
-frame_width = 480
 
 
 def getObjects(n_objects, img, thres, nms, draw=True, objects=['person']):
@@ -33,13 +33,23 @@ def getObjects(n_objects, img, thres, nms, draw=True, objects=['person']):
                 if (draw and n_objects > 0):
                     x1, y1, height, width = box[0], box[1], box[2], box[3]
                     n_objects -= 1
-                    center_x = x1 + (width // 2)
-                    center_y = y1 + (height // 2)
-                    cv2.arrowedLine(img, (center_x, center_y), (frame_height//2, frame_width//2), (0, 255, 0),
+                    center_x = x1 + (height // 2)
+                    center_y = y1 + (width // 2)
+                    object_center = (center_x,center_y)
+                    frame_center = (frame_width//2, frame_height//2)
+                    cv2.arrowedLine(img, object_center, frame_center, (0, 255, 0),
+                                    thickness=2, tipLength=0.5)
+                    cv2.arrowedLine(img, object_center, (frame_center[0], object_center[1]), (255, 0, 0),
                                     thickness=2, tipLength=0.5)
                     cv2.rectangle(img, box, color=(0, 255, 255), thickness=2)
-                    # cv2.circle(img, (center_x, center_y), radius=5,
+
+                    # cv2.circle(img, frame_center, radius=5,
                     #            color=(0, 0, 255), thickness=-1)
+                    # cv2.circle(img, object_center, radius=5,
+                    #            color=(255, 255, 255), thickness=-1)
+                    # cv2.circle(img, (x1+height//2,y1+width//2), radius=5,
+                    #            color=(0, 255, 255), thickness=-1)
+
                     cv2.putText(img, classNames[classId-1].upper(), (box[0]+10, box[1]+30),
                                 cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
                     cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
@@ -57,10 +67,9 @@ if __name__ == "__main__":
     fps = 120
     delay_time = int(1000/fps)
     # cap = cv2.VideoCapture('/Users/hardik/Downloads/cv-demo-test.mp4')
-    frame_height = 640
-    frame_width = 480
-    cap.set(3, 640)
-    cap.set(4, 480)
+
+    cap.set(3, frame_height)
+    cap.set(4, frame_width)
     # cap.set(10,70)
 
     while True:
