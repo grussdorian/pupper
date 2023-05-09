@@ -1,0 +1,5 @@
+# OpenCV build files
+build/
+bin/
+lib/
+.DS_Store
