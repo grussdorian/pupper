@@ -185,6 +185,10 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
         if getch() == 'x':
             return
         elif v_mod > V_THRESH:
+
+            print("passing, v_mod > V_THRESH")
+            return
+
             yaw = 1
             controller_dataframe['rx'] = yaw
             raw_data = pickle.dumps(controller_dataframe)
@@ -197,6 +201,10 @@ def send_control_signal(v_mod = 0, A = 0, keyboard = True):
             print("rx = 1")
             controller_dataframe['rx'] = 0
         elif v_mod < -V_THRESH:
+
+            print("passing, v_mod < -V_THRESH")
+            return
+
             yaw = -1
             controller_dataframe['rx'] = yaw
             raw_data = pickle.dumps(controller_dataframe)
