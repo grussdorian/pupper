@@ -45,7 +45,6 @@ class JoystickInterface:
         self.command_buffer = queue.Queue(maxsize=5)
         self.sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) # UDP
         self.sock.bind((UDP_IP, UDP_PORT))
-        self.last_command = None
         # enqueue_thread = EnqueueCommandsThread(self.command_buffer, self.sock)
         # EnqueueCommandsThread.start(self)
 
@@ -55,8 +54,7 @@ class JoystickInterface:
 
             # Modified UDP code
             print("before receiving input in joystickinterface")
-            msg = self.command_buffer.get() | self.last_command
-            self.last_command = msg
+            msg = self.command_buffer.get()
             # data, addr = self.sock.recvfrom(1024) # buffer size is 1024 bytes
             # msg = pickle.loads(data) # MODIFIED
             pprint(msg)
